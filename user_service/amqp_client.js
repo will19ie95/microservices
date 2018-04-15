@@ -10,6 +10,8 @@ if (args.length == 0) {
 }
 
 amqp.connect('amqp://192.168.1.14', function (err, conn) {
+  if (err) { console.log(err.stack) }
+  console.log(" [x] Connected to rabbitmq...")
   conn.createChannel(function (err, ch) {
     ch.assertQueue('', { exclusive: true }, function (err, q) {
       var corr = generateUuid();
