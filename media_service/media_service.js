@@ -70,8 +70,8 @@ app.use(function (req, res, next) {
 
 // Actual query
 app.get("/", (req, res, next) => { res.send("Hello from media microservice") })
-router.post("/addmedia", upload.single("contents"), MediaCtrl.addMedia);
-router.get("/getmedia/:fileId", MediaCtrl.getMedia)
+app.post("/addmedia", upload.single("contents"), MediaCtrl.addMedia);
+app.get("/getmedia/:fileId", MediaCtrl.getMedia)
 
 // Standalone server setup
 var port = process.env.PORT || 3001;

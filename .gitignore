@@ -57,8 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
-<<<<<<< HEAD
 # secret
 secret.js
-=======
->>>>>>> db050f59ab268c4a68616720e363f678c1b18594
