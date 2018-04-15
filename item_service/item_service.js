@@ -50,6 +50,7 @@ var db;
       logger.error(err);
     } else {
       db = db_;
+      console.log("Connected to Mongo...")
     }
   });
 // }
