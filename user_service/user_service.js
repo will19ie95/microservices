@@ -83,7 +83,7 @@ app.post("/adduser", UserCtrl.addUser)
 app.post("/verify", UserCtrl.verify)
 
 // Standalone server setup
-var port = process.env.PORT || 3001;
+var port = process.env.PORT || 3000;
 http.createServer(app).listen(port, function (err) {
   if (err) {
     logger.error(err);
