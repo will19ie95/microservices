@@ -3,8 +3,8 @@ var morgan = require('morgan');
 var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
-const UserCtrl = require("./user.ctrl")
-const secret = require("../secret");
+const UserCtrl = require("user.ctrl")
+const secret = require("secret");
 const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
