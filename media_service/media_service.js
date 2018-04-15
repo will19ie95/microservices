@@ -3,7 +3,7 @@ var morgan = require('morgan');
 var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
-const MediaCtrl = require("../controllers/media.ctrl")
+const MediaCtrl = require("./media.ctrl")
 const multer = require('multer')
 const upload = multer();
 
