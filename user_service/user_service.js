@@ -50,6 +50,7 @@ mongo.connect(url, null, function (err, db_) {
     logger.error(err);
   } else {
     db = db_;
+    console.log("Connected to Mongo...")
   }
 });
 // }
