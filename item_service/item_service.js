@@ -4,6 +4,7 @@ var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
 const ItemCtrl = require("./item.ctrl")
+const secret = require("../secret");
 const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
