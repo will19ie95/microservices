@@ -1,6 +1,6 @@
-const Item = require("../models/item.model");
-const User = require("../models/user.model");
-const db = require("../db");
+const Item = require("./item.model");
+const User = require("./user.model");
+// const db = require("../db");
 const moment = require("moment");
 
 exports.addItem = function (req, res, next) {
