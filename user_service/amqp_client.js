@@ -9,7 +9,7 @@ if (args.length == 0) {
   process.exit(1);
 }
 
-amqp.connect('amqp://192.168.1.14', function (err, conn) {
+amqp.connect('amqp://ubuntu@192.168.1.14', function (err, conn) {
   if (err) { console.log(err.stack) }
   console.log(" [x] Connected to rabbitmq...")
   conn.createChannel(function (err, ch) {
