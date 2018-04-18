@@ -12,7 +12,7 @@ const auth = jwt({
   secret: secret.mySecret,
   getToken: function (req) { if (req.cookies) { return req.cookies['twitter-jwt'];} }
 }, function(req, res, next) {
-  if (req.user) { return next(new Error("Please Sign In"))}
+  if (!req.user) { return next(new Error("Please Sign In"))}
   console.log("Auth: ", req.user)
 });
 
@@ -86,12 +86,11 @@ app.get("/", (req, res, next) => { res.send("Hello from user microservice")})
 app.get("/user/:username/followers", UserCtrl.getFollowers)
 app.get("/user/:username/following", UserCtrl.getFollowing)
 app.get("/user/:username", UserCtrl.getUser)
-app.post("/follow", auth, UserCtrl.follow)
-app.post("/adduser", UserCtrl.addUser)
 app.post("/verify", UserCtrl.verify)
 
+app.post("/follow", auth, UserCtrl.follow)
 app.post("/login", UserCtrl.login)
-app.post("/logout", UserCtrl.login)
+app.post("/logout", UserCtrl.logout)
 
 // Error Handling
 app.use(errorHandlers.logErrors)
