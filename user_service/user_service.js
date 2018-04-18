@@ -92,6 +92,10 @@ app.post("/verify", UserCtrl.verify)
 app.post("/login", UserCtrl.login)
 app.post("/logout", UserCtrl.login)
 
+// Error Handling
+app.use(errorHandlers.logErrors)
+app.use(errorHandlers.errorHandler)
+
 // Standalone server setup
 var port = process.env.PORT || 3000;
 http.createServer(app).listen(port, function (err) {
