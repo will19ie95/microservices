@@ -59,7 +59,6 @@ exports.deleteItem = function (req, res, next) {
     })
   })
 
-
 }
 exports.likeItem = function (req, res ,next) {
   const username = req.user.username;

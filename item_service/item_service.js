@@ -85,8 +85,11 @@ app.post("/item/:id/like", auth, ItemCtrl.likeItem) // /item/:id
 app.post("/search", auth, ItemCtrl.search)
 app.post("/additem", auth, ItemCtrl.addItem)
 
+app.delete("/item/:id", auth, ItemCtrl.deleteItem);
+
 app.get("/item/:id", ItemCtrl.getItem) // /item/:id
 app.get("/item", ItemCtrl.getItem) // /item?id=    Support or nah?
+
 
 // Error Handling
 app.use(errorHandlers.logErrors)
