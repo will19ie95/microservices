@@ -47,5 +47,10 @@ const itemSchema = new Schema({
   }
 });
 
+itemSchema.post("update", function(item) {
+  item.property.likes = item.liked_by.length()
+  console.log("Item " + item.id + " updated.")
+})
+
 const Item = mongoose.model("Item", itemSchema);
 module.exports = Item;
