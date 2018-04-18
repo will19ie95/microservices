@@ -68,7 +68,7 @@ exports.likeItem = function (req, res ,next) {
   
   const query = { id : item_id };
   // FIX ME. need to increment likes. or remove from db.
-  const update = like ? { $addToSet: { liked_by: username } } : { $pull: { liked_by: username } };
+  const update = like ? { $addToSet: { liked_by: username }, $inc: { "property.likes": 1 } } : { $pull: { liked_by: username }, $inc: { "property.likes": -1 } };
   Item.findOneAndUpdate(query, update, (err, updated_item) => {
     if (err) { return next(err) }
     if (!updated_item) { return next(new Error("Failed to like item with query: ", query)) }
