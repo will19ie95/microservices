@@ -96,7 +96,7 @@ app.use(errorHandlers.logErrors)
 app.use(errorHandlers.errorHandler)
 
 // Standalone server setup
-var port = process.env.PORT || 3001;
+var port = process.env.PORT || 3000;
 http.createServer(app).listen(port, function (err) {
   if (err) {
     logger.error(err);

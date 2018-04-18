@@ -43,37 +43,6 @@ app.use(
   })
 );
 
-var db;
-// if (process.env.MONGO_URL) {
-  // mongo.connect(process.env.MONGO_URL, null, function (err, db_) {
-  const url = "mongodb://127.0.0.1:27017/twitter"
-  mongo.connect(url, null, function (err, db_) {
-    if (err) {
-      logger.error(err);
-    } else {
-      db = db_;
-    }
-  });
-// }
-
-app.use(function (req, res, next) {
-  if (!db) {
-    //Database not connected
-    // mongo.connect(process.env.MONGO_URL, null, function (err, db_) {
-    mongo.connect(url, null, function (err, db_) {
-      if (err) {
-        logger.error(err);
-        res.sendStatus(500);
-      } else {
-        db = db_;
-        next();
-      }
-    });
-  } else {
-    next();
-  }
-});
-
 // Actual query
 app.get("/", (req, res, next) => { res.send("Hello from media microservice") })
 app.post("/addmedia", upload.single("contents"), MediaCtrl.addMedia);
@@ -84,7 +53,7 @@ app.use(errorHandlers.logErrors)
 app.use(errorHandlers.errorHandler)
 
 // Standalone server setup
-var port = process.env.PORT || 3001;
+var port = process.env.PORT || 3000;
 http.createServer(app).listen(port, function (err) {
   if (err) {
     logger.error(err);
