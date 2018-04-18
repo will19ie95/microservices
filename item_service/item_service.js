@@ -3,6 +3,8 @@ var morgan = require('morgan');
 var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
+var cookieParser = require('cookie-parser')
+var bodyParser = require('body-parser')
 const ItemCtrl = require("./item.ctrl")
 const errorHandlers = require("./errorHandlers");
 const secret = require("./secret");
@@ -35,6 +37,9 @@ logger.stream = {
 
 // Express and middlewares
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser())
 app.use(
   //Log requests
   morgan(':method :url :status :response-time ms - :res[content-length]', {
