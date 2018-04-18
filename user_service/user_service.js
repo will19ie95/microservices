@@ -9,6 +9,9 @@ const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
   getToken: function (req) { return req.cookies['twitter-jwt']; }
+}, function(req, res, next) {
+  if (req.user) { return next(new Error("Please Sign In"))}
+  console.log("Auth: ", req.user)
 });
 
 // Logging
