@@ -3,6 +3,7 @@ var morgan = require('morgan');
 var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
+var bodyParser = require('body-parser')
 const UserCtrl = require("./user.ctrl")
 const secret = require("./secret");
 const jwt = require('express-jwt');
@@ -13,6 +14,7 @@ const auth = jwt({
   if (req.user) { return next(new Error("Please Sign In"))}
   console.log("Auth: ", req.user)
 });
+
 
 // Logging
 winston.emitErrs = true;
@@ -37,6 +39,8 @@ logger.stream = {
 
 // Express and middlewares
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   //Log requests
   morgan(':method :url :status :response-time ms - :res[content-length]', {
