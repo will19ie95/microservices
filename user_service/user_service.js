@@ -11,10 +11,7 @@ const secret = require("./secret");
 const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
-  getToken: function (req) { if (req.cookies) { return req.cookies['twitter-jwt'];} }
-}, function(req, res, next) {
-  if (req.user) { return next(new Error("Please Sign In"))}
-  console.log("Auth: ", req.user)
+  getToken: function (req) { return req.cookies['twitter-jwt']; }
 });
 
 
@@ -43,6 +40,7 @@ logger.stream = {
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser())
 app.use(
   //Log requests
   morgan(':method :url :status :response-time ms - :res[content-length]', {
