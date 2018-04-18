@@ -4,6 +4,7 @@ var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
 const ItemCtrl = require("./item.ctrl")
+const errorHandlers = require("./errorHandlers");
 const secret = require("./secret");
 const jwt = require('express-jwt');
 const auth = jwt({
@@ -82,6 +83,9 @@ app.post("/additem", auth, ItemCtrl.addItem)
 app.get("/item/:id", ItemCtrl.getItem) // /item/:id
 app.get("/item", ItemCtrl.getItem) // /item?id=    Support or nah?
 
+// Error Handling
+app.use(errorHandlers.logErrors)
+app.use(errorHandlers.errorHandler)
 
 // Standalone server setup
 var port = process.env.PORT || 3001;

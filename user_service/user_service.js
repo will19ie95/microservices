@@ -5,6 +5,7 @@ var mongo = require('mongoose');
 var winston = require('winston');
 var bodyParser = require('body-parser')
 const UserCtrl = require("./user.ctrl")
+const errorHandlers = require("./errorHandlers");
 const secret = require("./secret");
 const jwt = require('express-jwt');
 const auth = jwt({

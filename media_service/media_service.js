@@ -4,6 +4,7 @@ var http = require('http');
 var mongo = require('mongoose');
 var winston = require('winston');
 const MediaCtrl = require("./media.ctrl")
+const errorHandlers = require("./errorHandlers");
 const multer = require('multer')
 const upload = multer();
 
@@ -72,6 +73,10 @@ app.use(function (req, res, next) {
 app.get("/", (req, res, next) => { res.send("Hello from media microservice") })
 app.post("/addmedia", upload.single("contents"), MediaCtrl.addMedia);
 app.get("/getmedia/:fileId", MediaCtrl.getMedia)
+
+// Error Handling
+app.use(errorHandlers.logErrors)
+app.use(errorHandlers.errorHandler)
 
 // Standalone server setup
 var port = process.env.PORT || 3001;
