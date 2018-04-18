@@ -89,6 +89,9 @@ app.post("/follow", auth, UserCtrl.follow)
 app.post("/adduser", UserCtrl.addUser)
 app.post("/verify", UserCtrl.verify)
 
+app.post("/login", UserCtrl.login)
+app.post("/logout", UserCtrl.login)
+
 // Standalone server setup
 var port = process.env.PORT || 3000;
 http.createServer(app).listen(port, function (err) {
