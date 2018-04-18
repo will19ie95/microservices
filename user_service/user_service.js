@@ -82,9 +82,11 @@ app.use(function (req, res, next) {
 
 // Actual query
 app.get("/", (req, res, next) => { res.send("Hello from user microservice")})
-app.get("/user/:username/followers", UserCtrl.getFollowers)
-app.get("/user/:username/following", UserCtrl.getFollowing)
-app.get("/user/:username", UserCtrl.getUser)
+app.get("/user/:username/followers", auth, UserCtrl.getFollowers)
+app.get("/user/:username/following", auth, UserCtrl.getFollowing)
+app.get("/user/:username", auth, UserCtrl.getUser)
+
+app.post("/adduser", UserCtrl.addUser)
 app.post("/verify", UserCtrl.verify)
 app.post("/follow", auth, UserCtrl.follow)
 app.post("/login", UserCtrl.login)
