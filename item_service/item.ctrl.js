@@ -40,7 +40,7 @@ exports.getItem = function (req, res, next) {
   })
 }
 exports.deleteItem = function (req, res, next) {
-  const id = req.query.id || req.params[0];
+  const id = req.query.id || req.params['id'];
   // delete associated media files...first or later
   // FIX ME
 
