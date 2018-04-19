@@ -159,7 +159,7 @@ exports.search = function (req, res, next) {
     return res.json({
       status: "OK",
       message: "Found Items",
-      items: items.slice(0, limit)
+      // items: items.slice(0, limit)
     })
   // }
 }
