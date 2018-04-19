@@ -161,5 +161,5 @@ exports.search = function (req, res, next) {
       message: "Found Items",
       items: items.slice(0, limit)
     })
-  }
+  // }
 }
