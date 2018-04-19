@@ -1,6 +1,6 @@
 var email = require("emailjs");
 
-exports.postfixSend = function postfixSend(emailInfo, callback) {
+exports.postfixSend = function (emailInfo, callback) {
 
   var server = email.server.connect({
     user: "no.reply.twitterClone",
