@@ -46,7 +46,7 @@ app.use(
 // Actual query
 app.get("/", (req, res, next) => { res.send("Hello from media microservice") })
 app.post("/addmedia", upload.single("contents"), MediaCtrl.addMedia);
-app.get("/getmedia/:fileId", MediaCtrl.getMedia)
+app.get("/media/:fileId", MediaCtrl.getMedia)
 
 // Error Handling
 app.use(errorHandlers.logErrors)
