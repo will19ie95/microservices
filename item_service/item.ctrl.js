@@ -82,79 +82,84 @@ exports.likeItem = function (req, res ,next) {
 // Sepearate Search Into Micro Service Elastic Search
 exports.search = function (req, res, next) {
   // req.user populated by jwt cookie
-  const username = req.user.username // curr user
-  const timestamp = moment().unix(req.body.timestamp) || moment().unix(); //default time is NOW if none provided
-  const query_string = req.body.q;
-  const username_filter = req.body.username;
-  const rank = req.body.rank === "time" ? "time" : "interest"; // order return item by "time" or "interest", default "interest".
-  const parent = req.body.parent || ""; // default none
-  const hasMedia = (req.body.hasMedia !== false) ? true : false;; //default true
-  const only_following = (req.body.following !== false) ? true : false; // default true 
+  // const username = req.user.username // curr user
+  // const timestamp = moment().unix(req.body.timestamp) || moment().unix(); //default time is NOW if none provided
+  // const query_string = req.body.q;
+  // const username_filter = req.body.username;
+  // const rank = req.body.rank === "time" ? "time" : "interest"; // order return item by "time" or "interest", default "interest".
+  // const parent = req.body.parent || ""; // default none
+  // const hasMedia = (req.body.hasMedia !== false) ? true : false;; //default true
+  // const only_following = (req.body.following !== false) ? true : false; // default true 
 
-  var limit = req.body.limit || 25;       // default 25 if none provided
-  limit = (limit > 100) ? 100 : limit;      // limit to 100
+  // var limit = req.body.limit || 25;       // default 25 if none provided
+  // limit = (limit > 100) ? 100 : limit;      // limit to 100
 
-  // content: /query_string/i,
-  var query = {
-    timestamp: { $lte: timestamp }
-  }
+  // // content: /query_string/i,
+  // var query = {
+  //   timestamp: { $lte: timestamp }
+  // }
 
-  // append query regex for content if exist
-  if (query_string) {
-    query["content"] = {
-      "$regex": query_string,
-      "$options": "i" // ignore cases
-    }
-  }
+  // // append query regex for content if exist
+  // if (query_string) {
+  //   query["content"] = {
+  //     "$regex": query_string,
+  //     "$options": "i" // ignore cases
+  //   }
+  // }
 
-  // if true, return post by jwt user following
-  if (only_following) {
-    // find following for jwt user
-    User.findOne({ username: req.user.username }, function (err, user) {
-      // list of following, only return if match any of these
-      var following = user.following;
+  // // if true, return post by jwt user following
+  // if (only_following) {
+  //   // find following for jwt user
+  //   User.findOne({ username: req.user.username }, function (err, user) {
+  //     // list of following, only return if match any of these
+  //     var following = user.following;
 
-      // append username constraint if exist
-      if (username_filter) {
-        // possible duplication, fix me
-        following.push(username_filter)
-      }
+  //     // append username constraint if exist
+  //     if (username_filter) {
+  //       // possible duplication, fix me
+  //       following.push(username_filter)
+  //     }
 
-      var following_filter = { $in: following }
+  //     var following_filter = { $in: following }
 
-      query["username"] = following_filter
+  //     query["username"] = following_filter
 
-      Item.find(query, function (err, items) {
-        if (err) { return next(err) }
-        if (!items) { return next(new Error("No Items found")) }
-        return res.json({
-          status: "OK",
-          message: "Found Items",
-          items: items.slice(0, limit)
-        })
-      })
-    })
-  } else {
-    // append username constraint if exist
-    if (username_filter) {
-      // Create username key in query object
-      query["username"] = {
-        // append username_filter to search for it
-        $in: [
-          username_filter
-        ]
-      }
-    }
+  //     Item.find(query, function (err, items) {
+  //       if (err) { return next(err) }
+  //       if (!items) { return next(new Error("No Items found")) }
+  //       return res.json({
+  //         status: "OK",
+  //         message: "Found Items",
+  //         items: items.slice(0, limit)
+  //       })
+  //     })
+  //   })
+  // } else {
+  //   // append username constraint if exist
+  //   if (username_filter) {
+  //     // Create username key in query object
+  //     query["username"] = {
+  //       // append username_filter to search for it
+  //       $in: [
+  //         username_filter
+  //       ]
+  //     }
+  //   }
 
-    // only following is false, return all
-    Item.find(query, function (err, items) {
-      if (err) { return next(err) }
-      if (!items) { return next(new Error("No Items found")) }
-      return res.json({
-        status: "OK",
-        message: "Found Items",
-        items: items.slice(0, limit)
-      })
+  //   // only following is false, return all
+  //   Item.find(query, function (err, items) {
+  //     if (err) { return next(err) }
+  //     if (!items) { return next(new Error("No Items found")) }
+  //     return res.json({
+  //       status: "OK",
+  //       message: "Found Items",
+  //       items: items.slice(0, limit)
+  //     })
+  //   })
+    return res.json({
+      status: "OK",
+      message: "Found Items",
+      items: items.slice(0, limit)
     })
   }
 }
