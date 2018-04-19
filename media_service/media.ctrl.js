@@ -1,5 +1,5 @@
 const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: 'twitter' });
+const client = new cassandra.Client({ contactPoints: ['192.168.1.41'], keyspace: 'twitter' });
 const shortId = require("shortid");
 
 exports.addMedia = function (req, res, next) {
