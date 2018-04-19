@@ -50,7 +50,7 @@ app.use(
 var db;
 // if (process.env.MONGO_URL) {
   // mongo.connect(process.env.MONGO_URL, null, function (err, db_) {
-  const url = "mongodb://192.168.1.40:27017/twitter"
+  const url = "mongodb://127.0.0.1:27017/twitter"
   mongo.connect(url, null, function (err, db_) {
     if (err) {
       logger.error(err);
