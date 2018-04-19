@@ -10,7 +10,7 @@ exports.postfixSend = function postfixSend(emailInfo, callback) {
   });
 
   server.send({
-    text: emailInfo.msg,
+    text: emailInfo.text,
     from: emailInfo.from,
     to: emailInfo.to,
     subject: emailInfo.subject
