@@ -105,7 +105,7 @@ exports.search = function (req, res, next) {
     options: {
       username: req.user.username, // curr user
       timestamp: moment().unix(req.body.timestamp) || moment().unix(), //default time is NOW if none provided
-      query_string: req.body.q,
+      query_string: req.body.q || null,
       username_filter: req.body.username,
       rank: req.body.rank === "time" ? "time" : "interest", // order return item by "time" or "interest", default "interest".
       parent: req.body.parent || "", // default none
