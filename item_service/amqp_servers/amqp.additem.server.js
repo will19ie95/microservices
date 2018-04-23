@@ -45,7 +45,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           reply = {
             status: "OK",
             message: "Successfully created Item",
-            id: newitem.id,
+            id: newitem._id,
             item: newitem
           }
         }
