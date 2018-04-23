@@ -52,45 +52,47 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
               { correlationId: search.properties.correlationId },
               { persistent: true });
             ch.ack(search);
-          }
-          // list of following, only return if match any of these
-          var following = user.following;
+          } else {
+            // list of following, only return if match any of these
+            var following = user.following;
 
-          // append username constraint if exist
-          if (options.username_filter) {
-            // possible duplication, fix me
-            following.push(options.username_filter)
-          }
-
-          var following_filter = { $in: following }
-
-          query["username"] = following_filter
-
-          Item.find(query, function (err, items) {
-            if (err) { 
-              reply = {
-                status: "error",
-                message: "Error: " + err.stack
-              }
+            // append username constraint if exist
+            if (options.username_filter) {
+              // possible duplication, fix me
+              following.push(options.username_filter)
             }
-            if (!items) { 
-              reply = {
-                status: "error",
-                message: "Item Not Found"
+
+            var following_filter = { $in: following }
+
+            query["username"] = following_filter
+
+            Item.find(query, function (err, items) {
+              if (err) {
+                reply = {
+                  status: "error",
+                  message: "Error: " + err.stack
+                }
               }
-            } else {
-              reply = {
-                status: "OK",
-                message: "Found Items",
-                items: items.slice(0, limit)
+              if (!items) {
+                reply = {
+                  status: "error",
+                  message: "Item Not Found"
+                }
+              } else {
+                reply = {
+                  status: "OK",
+                  message: "Found Items",
+                  items: items.slice(0, limit)
+                }
               }
-            }
-            ch.sendToQueue(search.properties.replyTo,
-              new Buffer(JSON.stringify(reply)),
-              { correlationId: search.properties.correlationId },
-              { persistent: true });
-            ch.ack(search);
-          })
+              ch.sendToQueue(search.properties.replyTo,
+                new Buffer(JSON.stringify(reply)),
+                { correlationId: search.properties.correlationId },
+                { persistent: true });
+              ch.ack(search);
+            })
+          }
+          
         })
       } else {
         // append username constraint if exist
