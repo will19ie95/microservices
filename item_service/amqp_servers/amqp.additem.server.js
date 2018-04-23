@@ -16,7 +16,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
     ch.assertQueue(q, { durable: true });
     ch.prefetch(1);
     ch.consume(q, function reply(additem) {
-      console.log("Adding item: ", JSON.parse(additem.content))
+      // console.log("Adding item: ", JSON.parse(additem.content))
       var item = JSON.parse(additem.content)
 
       // consume the message DO THE WORK.

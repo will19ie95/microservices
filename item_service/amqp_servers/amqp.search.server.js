@@ -31,6 +31,28 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       if (options.only_following) {
         // find following for jwt user
         User.findOne({ username: options.username }, function (err, user) {
+          if (err) {
+            reply = {
+              status: "error",
+              message: "Error: " + err.stack
+            }
+            ch.sendToQueue(search.properties.replyTo,
+              new Buffer(JSON.stringify(reply)),
+              { correlationId: search.properties.correlationId },
+              { persistent: true });
+            ch.ack(search);
+          }
+          if (!user) {
+            reply = {
+              status: "error",
+              message: "User Not Found"
+            }
+            ch.sendToQueue(search.properties.replyTo,
+              new Buffer(JSON.stringify(reply)),
+              { correlationId: search.properties.correlationId },
+              { persistent: true });
+            ch.ack(search);
+          }
           // list of following, only return if match any of these
           var following = user.following;
 
