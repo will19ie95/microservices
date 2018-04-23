@@ -16,7 +16,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
     ch.assertQueue(q, { durable: true });
     ch.prefetch(1);
     ch.consume(q, function reply(search) {
-      var reply = search(search);
+      var reply = search_item(search);
       ch.sendToQueue(search.properties.replyTo,
         new Buffer(JSON.stringify(reply)),
         { correlationId: search.properties.correlationId },
@@ -26,8 +26,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
   });
 });
 
-function search(search) {
-
+const search_item = function(search) {
   var search_json = JSON.parse(search.content);
   var options = search_json.options;
   var limit = options.limit;
