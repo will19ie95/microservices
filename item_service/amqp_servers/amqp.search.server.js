@@ -10,7 +10,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
   console.log(" [x] Item Server Connected to rabbitmq...")
   // Add Item 
   conn.createChannel(function (err, ch) {
-    var q = 'searchitem_rpc_queue';
+    var q = 'searchitem_rpc_queue_test';
 
     console.log(' [x] Awaiting RPC requests');
     ch.assertQueue(q, { durable: true });

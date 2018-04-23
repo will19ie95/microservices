@@ -40,7 +40,7 @@ exports.addItem = function(req, res, next) {
         }, { noAck: false });
 
         // Send a request to queue to be fufilled
-        ch.sendToQueue('additem_rpc_queue',
+        ch.sendToQueue('additem_rpc_queue_test',
           new Buffer(JSON.stringify(item)),
           { correlationId: corr, replyTo: q.queue });
       });
@@ -85,7 +85,7 @@ exports.likeItem = function (req, res, next) {
         }, { noAck: false });
 
         // Send a request to queue to be fufilled
-        ch.sendToQueue('likeitem_rpc_queue',
+        ch.sendToQueue('likeitem_rpc_queue_test',
           new Buffer(JSON.stringify(item)),
           { correlationId: corr, replyTo: q.queue });
       });
@@ -160,7 +160,7 @@ exports.search = function (req, res, next) {
         }, { noAck: false });
 
         // Send a request to queue to be fufilled
-        ch.sendToQueue('searchitem_rpc_queue',
+        ch.sendToQueue('searchitem_rpc_queue_test',
           new Buffer(JSON.stringify(search)),
           { correlationId: corr, replyTo: q.queue });
       });

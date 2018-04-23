@@ -10,7 +10,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
   console.log(" [x] Item Server Connected to rabbitmq...")
   // Add Item 
   conn.createChannel(function (err, ch) {
-    var q = 'likeitem_rpc_queue';
+    var q = 'likeitem_rpc_queue_test';
 
     console.log(' [x] Awaiting RPC requests');
     ch.assertQueue(q, { durable: true });
@@ -23,7 +23,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       console.log(" [.] liked_item(%s)");
       // console.log(item)
 
-      const query = { id: item.item_id };
+      const query = { _id: item.item_id };
       // FIX ME. need to increment likes. or remove from db.
       const update = item.like ? { $addToSet: { liked_by: item.username } } : { $pull: { liked_by: item.username } };
       Item.findOneAndUpdate(query, update, (err, updated_item) => {
