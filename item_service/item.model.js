@@ -28,7 +28,8 @@ const itemSchema = new Schema({
   },
   id: {
     type: String,
-    default: shortId.generate
+    // set on request now.
+    // default: shortId.generate
   },
   parent: {
     type: String,

@@ -1,8 +1,8 @@
 {
-  "name": "item_service",
+  "name": "item.service",
   "version": "1.0.0",
   "description": "",
-  "main": "item_service.js",
+  "main": "item.service.js",
   "scripts": {
     "start": "micro",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,6 +30,7 @@
     "nodemon": "^1.17.3",
     "serve-favicon": "~2.4.5",
     "shortid": "^2.2.8",
+    "uuid": "^3.2.1",
     "winston": "^2.4.1"
   }
 }

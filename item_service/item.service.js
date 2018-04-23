@@ -8,6 +8,7 @@ var bodyParser = require('body-parser')
 const ItemCtrl = require("./item.ctrl")
 const errorHandlers = require("./errorHandlers");
 const secret = require("./secret");
+const amqp = require("./item.amqp");
 const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
@@ -79,16 +80,23 @@ app.use(function (req, res, next) {
   }
 });
 
-// Actual query
+// require("./amqp_servers/amqp.additem.server");
+// require("./amqp_servers/amqp.likeitem.server");
+
+// Actual query, REST
 app.get("/", (req, res, next) => { res.send("Hello from item microservice") })
-app.post("/item/:id/like", auth, ItemCtrl.likeItem) // /item/:id
-app.post("/search", auth, ItemCtrl.search)
-app.post("/additem", auth, ItemCtrl.addItem)
-
-app.delete("/item/:id", auth, ItemCtrl.deleteItem);
-
+// app.post("/item/:id/like", auth, ItemCtrl.likeItem) // /item/:id
+// app.post("/search", auth, ItemCtrl.search)
+// app.post("/additem", auth, ItemCtrl.addItem)
+// app.delete("/item/:id", auth, ItemCtrl.deleteItem);
 app.get("/item/:id", ItemCtrl.getItem) // /item/:id
 app.get("/item", ItemCtrl.getItem) // /item?id=    Support or nah?
+
+// AMQP Client Request.
+app.post("/item/:id/like", auth, amqp.likeItem) // /item/:id
+app.post("/search", auth, amqp.search)
+app.post("/additem", auth, amqp.addItem)
+// app.delete("/item/:id", auth, amqp.deleteItem);
 
 
 // Error Handling
