@@ -21,7 +21,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       var item = JSON.parse(additem.content)
 
       // consume the message DO THE WORK.
-      console.log(" [.] add_item(%s)", item._id);
+      console.log(" [.] add_item(%s)", item.id);
 
       const newItem = new Item({
         username: item.username,

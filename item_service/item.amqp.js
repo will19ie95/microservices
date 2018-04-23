@@ -35,6 +35,7 @@ exports.addItem = function(req, res, next) {
             console.log(' [.] Added Item:  %s', reply.item._id);
             ch.ack(item);
             ch.close();
+            // setTimeout(function () { conn.close() }, 500);
             return res.json(reply)
           }
         }, { noAck: false });
@@ -81,6 +82,7 @@ exports.likeItem = function (req, res, next) {
             // send back ack.
             ch.ack(item);
             ch.close();
+            // setTimeout(function () { conn.close() }, 500);
             return res.json(reply)
           }
         }, { noAck: false });
@@ -152,6 +154,7 @@ exports.search = function (req, res, next) {
             // send back ack.
             ch.ack(search);
             ch.close();
+            // setTimeout(function () { conn.close() }, 500);
             return res.json(reply)
             // return res.json({
             //   status: "OK",
