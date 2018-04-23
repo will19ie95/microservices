@@ -32,7 +32,7 @@ exports.addItem = function(req, res, next) {
           if (item.properties.correlationId == corr) {
             // callback to let us know we got it.
             const reply = JSON.parse(item.content)
-            console.log(' [.] Added Item:  %s', reply.item.id);
+            console.log(' [.] Added Item:  %s', reply.item._id);
             ch.ack(item);
             ch.close();
             return res.json(reply)
@@ -107,7 +107,7 @@ exports.search = function (req, res, next) {
     options: {
       username: req.user.username, // curr user
       timestamp: moment().unix(req.body.timestamp) || moment().unix(), //default time is NOW if none provided
-      query_string: req.body.q || null,
+      query_string: req.body.q || "",
       username_filter: req.body.username,
       rank: req.body.rank === "time" ? "time" : "interest", // order return item by "time" or "interest", default "interest".
       parent: req.body.parent || "", // default none
@@ -127,7 +127,7 @@ exports.search = function (req, res, next) {
   // append query regex for content if exist
   if (search.options.query_string) {
     search.query["content"] = {
-      "$regex": query_string,
+      "$regex": search.options.query_string,
       "$options": "i" // ignore cases
     }
   }

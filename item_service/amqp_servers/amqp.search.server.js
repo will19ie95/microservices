@@ -18,13 +18,13 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
     ch.prefetch(1);
     ch.consume(q, function reply(search) {
       var search_json = JSON.parse(search.content);
+
       var options = search_json.options;
       var limit = options.limit;
-      var query = search_json.query;
+      var query = search_json.query; options.query_string
       var reply;
 
       // consume the message DO THE WORK.
-      // 
       console.log(" [.] searching(%s)", options.query_string);
 
       // if true, return post by jwt user following
