@@ -34,67 +34,78 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       // consume the message DO THE WORK.
       console.log(" [.] searching(%s)", query_string);
 
-      // search body for elastic search. sort by timestamp
+      var query = {
+        "bool": {
+          "must": [{
+            "match": {
+              // must match search string.
+              "content": query_string
+            }
+          }]
+        }
+      };
+
+      if (username_filter) {
+        // must match username string.
+        query.bool.must.push({
+          "match": {
+            "username": username_filter
+          }
+        })
+      }
+
       var search_body = {
         sort: [
           { timestamp: { "order": "desc" } }
-        ]
+        ],
+        query: query
       }
 
-      // add query string to search if exist
-      if (query_string) {
-        search_body["query"] = {
-          match: {
-            content: query_string
-          }
+      client.search({
+        index: 'twitter',
+        type: 'items',
+        body: search_body
+      }).then(function (resp) {
+        var hits = resp.hits.hits;
+        // console.log("ElasticSearch Hit: ")
+        // console.log(hits)
+
+        // hits[x]._source
+        function reduceItem(hit) {
+          const item = hit._source;
+          item._id = hit._id;
+          return item;
         }
-      }
-      // wait for data to sync
-        client.search({
-          index: 'twitter',
-          type: 'items',
-          body: search_body
-        }).then(function (resp) {
-          var hits = resp.hits.hits;
-          // console.log("ElasticSearch Hit: ")
-          // console.log(hits)
 
-          // hits[x]._source
-          function reduceItem(hit) {
-            const item = hit._source;
-            item._id = hit._id;
-            return item;
-          }
+        // map reduce items from elastic hit result
+        const items = hits.map(reduceItem)
 
-          // map reduce items from elastic hit result
-          const items = hits.map(reduceItem)
+        reply = {
+          status: "OK",
+          message: "Elastic Search Found Items",
+          items: items.slice(0, limit),
+          // hits: hits.slice(0, limit)
+        }
 
+        ch.sendToQueue(search.properties.replyTo,
+          new Buffer(JSON.stringify(reply)),
+          { correlationId: search.properties.correlationId },
+          { persistent: true });
+        ch.ack(search);
+
+      }, function (err) {
+        if (err) {
           reply = {
-            status: "OK",
-            message: "Elastic Search Found Items",
-            items: items.slice(0, limit),
-            hits: hits.slice(0, limit)
+            status: "error",
+            message: "Error: " + err.stack
           }
-
           ch.sendToQueue(search.properties.replyTo,
             new Buffer(JSON.stringify(reply)),
             { correlationId: search.properties.correlationId },
             { persistent: true });
           ch.ack(search);
-
-        }, function (err) {
-          if (err) {
-            reply = {
-              status: "error",
-              message: "Error: " + err.stack
-            }
-            ch.sendToQueue(search.properties.replyTo,
-              new Buffer(JSON.stringify(reply)),
-              { correlationId: search.properties.correlationId },
-              { persistent: true });
-            ch.ack(search);
-          }
-        });
+        }
+      });
         
     });
   });
