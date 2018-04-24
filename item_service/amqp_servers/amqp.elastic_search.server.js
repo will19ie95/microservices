@@ -49,54 +49,55 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           }
         }
       }
+      // wait for data to sync
+      setTimeout(() => {
+        client.search({
+          index: 'twitter',
+          type: 'items',
+          body: search_body
+        }).then(function (resp) {
+          var hits = resp.hits.hits;
+          // console.log("ElasticSearch Hit: ")
+          // console.log(hits)
 
-      client.search({
-        index: 'twitter',
-        type: 'items',
-        body: search_body
-      }).then(function (resp) {
-        var hits = resp.hits.hits;
-        // console.log("ElasticSearch Hit: ")
-        // console.log(hits)
-
-        // hits[x]._source
-        function reduceItem(hit) {
-          const item = hit._source;
-          item._id = hit._id;
-          return item;
-        }
-
-        // map reduce items from elastic hit result
-        const items = hits.map(reduceItem)
-
-        reply = {
-          status: "OK",
-          message: "Elastic Search Found Items",
-          items: items.slice(0, limit)
-          // hits: hits.slice(0, limit)
-        }
-
-        ch.sendToQueue(search.properties.replyTo,
-          new Buffer(JSON.stringify(reply)),
-          { correlationId: search.properties.correlationId },
-          { persistent: true });
-        ch.ack(search);
-
-      }, function (err) {
-        if (err) { 
-          reply = {
-            status: "error",
-            message: "Error: " + err.stack
+          // hits[x]._source
+          function reduceItem(hit) {
+            const item = hit._source;
+            item._id = hit._id;
+            return item;
           }
+
+          // map reduce items from elastic hit result
+          const items = hits.map(reduceItem)
+
+          reply = {
+            status: "OK",
+            message: "Elastic Search Found Items",
+            items: items.slice(0, limit)
+            // hits: hits.slice(0, limit)
+          }
+
           ch.sendToQueue(search.properties.replyTo,
             new Buffer(JSON.stringify(reply)),
             { correlationId: search.properties.correlationId },
             { persistent: true });
           ch.ack(search);
-        }
-      });
-      
 
+        }, function (err) {
+          if (err) {
+            reply = {
+              status: "error",
+              message: "Error: " + err.stack
+            }
+            ch.sendToQueue(search.properties.replyTo,
+              new Buffer(JSON.stringify(reply)),
+              { correlationId: search.properties.correlationId },
+              { persistent: true });
+            ch.ack(search);
+          }
+        });
+        
+      }, 1000); // 1 second timeout
     });
   });
 });
