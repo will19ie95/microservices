@@ -8,7 +8,7 @@ var bodyParser = require('body-parser')
 const ItemCtrl = require("./item.ctrl")
 const errorHandlers = require("./errorHandlers");
 const secret = require("./secret");
-const amqp = require("./item.amqp");
+const Amqp = require("./item.amqp");
 const jwt = require('express-jwt');
 const auth = jwt({
   secret: secret.mySecret,
@@ -94,10 +94,11 @@ app.get("/item/:id", ItemCtrl.getItem) // /item/:id
 app.get("/item", ItemCtrl.getItem) // /item?id=    Support or nah?
 
 // AMQP Client Request.
-app.post("/item/:id/like", auth, amqp.likeItem) // /item/:id
-app.post("/search", auth, amqp.search)
-app.post("/additem", auth, amqp.addItem)
-// app.delete("/item/:id", auth, amqp.deleteItem);
+app.post("/item/:id/like", auth, Amqp.likeItem) // /item/:id
+// app.post("/search", auth, Amqp.search)
+app.post("/search", auth, Amqp.elastic_search)
+app.post("/additem", auth, Amqp.addItem)
+// app.delete("/item/:id", auth, Amqp.deleteItem);
 
 
 // Error Handling

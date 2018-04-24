@@ -50,8 +50,6 @@ exports.addItem = function(req, res, next) {
   });
 
 }
-
-
 exports.likeItem = function (req, res, next) {
   // send AMQP 
   const username = req.user.username;
@@ -96,9 +94,6 @@ exports.likeItem = function (req, res, next) {
     });
   });
 }
-
-
-// SEARCH AMQP Client
 exports.search = function (req, res, next) {
 
   var limit = req.body.limit || 25;       // default 25 if none provided
@@ -172,6 +167,64 @@ exports.search = function (req, res, next) {
       });
     });
   });
+}
+exports.elastic_search = function (req, res, next) {
 
+  var limit = req.body.limit || 25;       // default 25 if none provided
+  limit = (limit > 100) ? 100 : limit;      // limit to 100
 
+  // req.user populated by jwt cookie
+  const search = {
+    options: {
+      username: req.user.username, // curr user
+      timestamp: moment().unix(req.body.timestamp) || moment().unix(), //default time is NOW if none provided
+      query_string: req.body.q || "",
+      username_filter: req.body.username,
+      rank: req.body.rank === "time" ? "time" : "interest", // order return item by "time" or "interest", default "interest".
+      parent: req.body.parent || "", // default none
+      hasMedia: (req.body.hasMedia === true) ? true : false, //default false
+      only_following: (req.body.following !== false) ? true : false // default true 
+    },
+  }
+  var limit = req.body.limit || 25;       // default 25 if none provided
+  search.options.limit = (limit > 100) ? 100 : limit;
+
+  amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
+    if (err) { next(new Error("Failed to connected Rabbitmq")) }
+    // console.log(" [x] Connected to rabbitmq...")
+    conn.createChannel(function (err, ch) {
+      ch.assertQueue('', { exclusive: true }, function (err, q) {
+        if (err) { next(new Error("Failed to assert queue")) }
+        // genereate ID for this task
+        var corr = uuidv4();
+
+        ch.prefetch(1);
+        ch.consume(q.queue, function (search) {
+          // check the id for this msg.
+          if (search.properties.correlationId == corr) {
+            // callback to let us know we got it.
+            var reply = JSON.parse(search.content)
+
+            // console.log(' [.] Searched Item:  ', reply);
+            // send back ack.
+            ch.ack(search);
+            ch.close();
+            setTimeout(function () { conn.close() }, 500);
+            return res.json(reply)
+            // return res.json({
+            //   status: "OK",
+            //   message: "Found Items",
+            //   items: search_results.items.slice(0, limit)
+            // })
+          }
+        }, { noAck: false });
+
+        // Send a request to queue to be fufilled
+        ch.sendToQueue('elastic_searchitem_rpc_queue',
+          // ch.sendToQueue('searchitem_rpc_queue_test',
+          new Buffer(JSON.stringify(search)),
+          { correlationId: corr, replyTo: q.queue });
+      });
+    });
+  });
 }
