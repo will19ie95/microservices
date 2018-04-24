@@ -50,7 +50,6 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
         }
       }
       // wait for data to sync
-      setTimeout(() => {
         client.search({
           index: 'twitter',
           type: 'items',
@@ -73,8 +72,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           reply = {
             status: "OK",
             message: "Elastic Search Found Items",
-            items: items.slice(0, limit)
-            // hits: hits.slice(0, limit)
+            items: items.slice(0, limit),
+            hits: hits.slice(0, limit)
           }
 
           ch.sendToQueue(search.properties.replyTo,
@@ -97,7 +96,6 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           }
         });
         
-      }, 1000); // 1 second timeout
     });
   });
 });
