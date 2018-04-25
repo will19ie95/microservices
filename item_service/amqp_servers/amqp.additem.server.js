@@ -66,26 +66,28 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           //   id: newItem.id,
           //   item: newItem
           // })
-          if (err) {
-            console.log(err.stack)
-            reply = {
-              status: "error",
-              message: "Error: " + err.stack
-            }
-          } else {
-            reply = {
-              status: "OK",
-              message: "Successfully created Item",
-              id: newitem._id,
-              item: newitem
-            }
-          }
-          ch.sendToQueue(additem.properties.replyTo,
-            new Buffer(JSON.stringify(reply)),
-            { correlationId: additem.properties.correlationId },
-            { persistent: true });
-          ch.ack(additem);
         });
+
+        if (err) {
+          console.log(err.stack)
+          reply = {
+            status: "error",
+            message: "Error: " + err.stack
+          }
+        } else {
+          reply = {
+            status: "OK",
+            message: "Successfully created Item",
+            id: newitem._id,
+            item: newitem
+          }
+        }
+
+        ch.sendToQueue(additem.properties.replyTo,
+          new Buffer(JSON.stringify(reply)),
+          { correlationId: additem.properties.correlationId },
+          { persistent: true });
+        ch.ack(additem);
       });
     });
   });
