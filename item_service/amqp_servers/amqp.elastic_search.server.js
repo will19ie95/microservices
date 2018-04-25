@@ -70,17 +70,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
         User.findOne({ username: username }, function (err, user) {
           // if (err) { return next(err) }
           if (!user) {
-            // return next(new Error("Username not Found"))
-            reply = {
-              status: "Error",
-              message: "User Not Found"
-            }
-            ch.sendToQueue(search.properties.replyTo,
-              new Buffer(JSON.stringify(reply)),
-              { correlationId: search.properties.correlationId },
-              { persistent: true });
-            ch.ack(search);
-            
+            console.log("USER NOT FOUND")
           }
           // list of following, only return if match any of these
           var following = user.following;
