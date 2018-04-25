@@ -108,7 +108,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
             var search_body = {
               from: 0,
-              size: 1000,
+              size: 200,
               sort: [
                 { timestamp: { "order": "desc" } }
               ],
@@ -171,7 +171,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       } else {
         var search_body = {
           from: 0,
-          size: 1000,
+          size: 200,
           sort: [
             { timestamp: { "order": "desc" } }
           ],
