@@ -178,7 +178,7 @@ exports.getFollowing = function (req, res, next) {
 exports.follow = function (req, res, next) {
 
   const username_to_follow = req.body.username;
-  const follow = req.body.follow; // If false then unfollow
+  var follow = req.body.follow; // If false then unfollow
   if (follow !== false) {
     follow = true;
   }
