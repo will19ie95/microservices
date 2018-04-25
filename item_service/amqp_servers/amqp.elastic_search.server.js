@@ -25,8 +25,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
     ch.consume(q, function reply(search) {
       var search_json = JSON.parse(search.content);
 
-      console.log("Searching with ")
-      console.log(search_json)
+      // console.log("Searching with ")
+      // console.log(search_json)
 
 
       var options = search_json.options;
@@ -38,8 +38,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       var reply;
 
       // consume the message DO THE WORK.
-      console.log(" [.] searching(%s)", query_string);
-      console.log("limit: ", limit)
+      // console.log(" [.] searching(%s)", query_string);
+      // console.log("limit: ", limit)
 
       var query = {
         "bool": {
