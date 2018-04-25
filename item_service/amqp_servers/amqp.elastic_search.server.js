@@ -65,66 +65,83 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       }
 
       if (only_following) {
-        query.bool.must.push({
-          "match": {
-            "username": username
+        // get followings
+
+        User.findOne({ username: username }, function (err, user) {
+          // list of following, only return if match any of these
+          var following = user.following;
+
+          // append username constraint if exist
+          if (username_filter) {
+            // possible duplication, fix me
+            following.push(username_filter)
           }
+
+          // turn into query style { "username": }
+          // following_ = 
+
+          query.bool.should.push({
+            "terms": {
+              "username": following
+            },
+            "minimum_should_match": 1
+          })
+
         })
-      }
-
-      var search_body = {
-        sort: [
-          { timestamp: { "order": "desc" } }
-        ],
-        query: query
-      }
-
-      client.search({
-        index: 'twitter',
-        type: 'items',
-        body: search_body
-      }).then(function (resp) {
-        var hits = resp.hits.hits;
-        // console.log("ElasticSearch Hit: ")
-        // console.log(hits)
-
-        // hits[x]._source
-        function reduceItem(hit) {
-          const item = hit._source;
-          item._id = hit._id;
-          return item;
+      } else {
+        var search_body = {
+          sort: [
+            { timestamp: { "order": "desc" } }
+          ],
+          query: query
         }
 
-        // map reduce items from elastic hit result
-        const items = hits.map(reduceItem)
+        client.search({
+          index: 'twitter',
+          type: 'items',
+          body: search_body
+        }).then(function (resp) {
+          var hits = resp.hits.hits;
+          // console.log("ElasticSearch Hit: ")
+          // console.log(hits)
 
-        reply = {
-          status: "OK",
-          message: "Elastic Search Found Items",
-          items: items.slice(0, limit),
-          // hits: hits.slice(0, limit)
-        }
-
-        ch.sendToQueue(search.properties.replyTo,
-          new Buffer(JSON.stringify(reply)),
-          { correlationId: search.properties.correlationId },
-          { persistent: true });
-        ch.ack(search);
-
-      }, function (err) {
-        if (err) {
-          reply = {
-            status: "error",
-            message: "Error: " + err.stack
+          // hits[x]._source
+          function reduceItem(hit) {
+            const item = hit._source;
+            item._id = hit._id;
+            return item;
           }
+
+          // map reduce items from elastic hit result
+          const items = hits.map(reduceItem)
+
+          reply = {
+            status: "OK",
+            message: "Elastic Search Found Items",
+            items: items.slice(0, limit),
+            // hits: hits.slice(0, limit)
+          }
+
           ch.sendToQueue(search.properties.replyTo,
             new Buffer(JSON.stringify(reply)),
             { correlationId: search.properties.correlationId },
             { persistent: true });
           ch.ack(search);
-        }
-      });
-        
+
+        }, function (err) {
+          if (err) {
+            reply = {
+              status: "error",
+              message: "Error: " + err.stack
+            }
+            ch.sendToQueue(search.properties.replyTo,
+              new Buffer(JSON.stringify(reply)),
+              { correlationId: search.properties.correlationId },
+              { persistent: true });
+            ch.ack(search);
+          }
+        });
+      }
     });
   });
 });
