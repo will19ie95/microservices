@@ -27,8 +27,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
       var options = search_json.options;
       var query_string = options.query_string;
+      var username_filter = options.username_filter;
       var limit = options.limit;
-      var query = search_json.query;
       var reply;
 
       // consume the message DO THE WORK.
