@@ -36,14 +36,19 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
       var query = {
         "bool": {
-          "must": [{
-            "match": {
-              // must match search string.
-              "content": query_string
-            }
-          }]
+          "must": []
         }
       };
+
+      if (query_string) {
+        // must match search string.
+        query.bool.must.push({
+          "match": {
+            "content": query_string
+          }
+        })
+      }
+
 
       if (username_filter) {
         // must match username string.

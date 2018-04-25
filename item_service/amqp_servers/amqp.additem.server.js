@@ -7,7 +7,7 @@ const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
   // host: '192.168.1.44:9200',
   host: '130.245.168.171:9200',
-  log: 'trace'
+  // log: 'trace'
 });
 
 var amqp = require('amqplib/callback_api');
@@ -40,7 +40,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
       newItem.save((err, newitem) => {
         var reply;
-        const id_string = JSON.parse(JSON.stringify(newItem._id))
+          const id_string = JSON.parse(JSON.stringify(newItem._id))
+        
         client.index({
           index: "twitter",
           type: "items",
@@ -59,27 +60,6 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           }
         }, function (err, resp, status) {
           // console.log("Added " + newItem._id + " to ElasticSearch")
-          if (err) {
-            console.log(err.stack)
-            reply = {
-              status: "error",
-              message: "Error: " + err.stack
-            }
-          } else {
-            reply = {
-              status: "OK",
-              message: "Successfully created Item",
-              id: newitem._id,
-              item: newitem
-            }
-          }
-
-          ch.sendToQueue(additem.properties.replyTo,
-            new Buffer(JSON.stringify(reply)),
-            { correlationId: additem.properties.correlationId },
-            { persistent: true });
-          ch.ack(additem);
-
           // return res.json({
           //   status: "OK",
           //   message: "Successfully created Item",
@@ -87,6 +67,27 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           //   item: newItem
           // })
         });
+
+        if (err) {
+          console.log(err.stack)
+          reply = {
+            status: "error",
+            message: "Error: " + err.stack
+          }
+        } else {
+          reply = {
+            status: "OK",
+            message: "Successfully created Item",
+            id: newitem._id,
+            item: newitem
+          }
+        }
+
+        ch.sendToQueue(additem.properties.replyTo,
+          new Buffer(JSON.stringify(reply)),
+          { correlationId: additem.properties.correlationId },
+          { persistent: true });
+        ch.ack(additem);
       });
     });
   });
