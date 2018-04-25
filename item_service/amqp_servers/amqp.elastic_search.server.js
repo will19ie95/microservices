@@ -82,6 +82,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
             ch.ack(search);
             
           } else {
+          
             // list of following, only return if match any of these
             var following = user.following;
 
@@ -92,14 +93,17 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
             }
 
             // turn into query style { "username": }
-            // following_ = 
+            following_list = [];
+            for (var i = 0; i < following.length; i++) {
+              console.log("Following: ", following[i])
+              following_list.push({
+                "match": {
+                  "username": following[i]
+                }
+              })
+            }
 
-            query.bool.should.push({
-              "terms": {
-                "username": following
-              },
-              "minimum_should_match": 1
-            })
+            query.bool.should = following_list;
 
             var search_body = {
               sort: [
