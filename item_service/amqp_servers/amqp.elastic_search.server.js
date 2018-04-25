@@ -32,6 +32,8 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
       var options = search_json.options;
       var query_string = options.query_string;
       var username_filter = options.username_filter;
+      var username = options.username;
+      var only_following = options.only_following;
       var limit = options.limit;
       var reply;
 
@@ -53,12 +55,19 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
         })
       }
 
-
       if (username_filter) {
         // must match username string.
         query.bool.must.push({
           "match": {
             "username": username_filter
+          }
+        })
+      }
+
+      if (only_following) {
+        query.bool.must.push({
+          "match": {
+            "username": username
           }
         })
       }
@@ -70,53 +79,51 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
         query: query
       }
 
-      setTimeout(() => {
-        client.search({
-          index: 'twitter',
-          type: 'items',
-          body: search_body
-        }).then(function (resp) {
-          var hits = resp.hits.hits;
-          // console.log("ElasticSearch Hit: ")
-          // console.log(hits)
+      client.search({
+        index: 'twitter',
+        type: 'items',
+        body: search_body
+      }).then(function (resp) {
+        var hits = resp.hits.hits;
+        // console.log("ElasticSearch Hit: ")
+        // console.log(hits)
 
-          // hits[x]._source
-          function reduceItem(hit) {
-            const item = hit._source;
-            item._id = hit._id;
-            return item;
-          }
+        // hits[x]._source
+        function reduceItem(hit) {
+          const item = hit._source;
+          item._id = hit._id;
+          return item;
+        }
 
-          // map reduce items from elastic hit result
-          const items = hits.map(reduceItem)
+        // map reduce items from elastic hit result
+        const items = hits.map(reduceItem)
 
+        reply = {
+          status: "OK",
+          message: "Elastic Search Found Items",
+          items: items.slice(0, limit),
+          // hits: hits.slice(0, limit)
+        }
+
+        ch.sendToQueue(search.properties.replyTo,
+          new Buffer(JSON.stringify(reply)),
+          { correlationId: search.properties.correlationId },
+          { persistent: true });
+        ch.ack(search);
+
+      }, function (err) {
+        if (err) {
           reply = {
-            status: "OK",
-            message: "Elastic Search Found Items",
-            items: items.slice(0, limit),
-            // hits: hits.slice(0, limit)
+            status: "error",
+            message: "Error: " + err.stack
           }
-
           ch.sendToQueue(search.properties.replyTo,
             new Buffer(JSON.stringify(reply)),
             { correlationId: search.properties.correlationId },
             { persistent: true });
           ch.ack(search);
-
-        }, function (err) {
-          if (err) {
-            reply = {
-              status: "error",
-              message: "Error: " + err.stack
-            }
-            ch.sendToQueue(search.properties.replyTo,
-              new Buffer(JSON.stringify(reply)),
-              { correlationId: search.properties.correlationId },
-              { persistent: true });
-            ch.ack(search);
-          }
-        });
-      }, 3000);
+        }
+      });
         
     });
   });
