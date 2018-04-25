@@ -87,10 +87,10 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
             var following = user.following;
 
             // append username constraint if exist
-            if (username_filter) {
-              // possible duplication, fix me
-              following.push(username_filter)
-            }
+            // if (username_filter) {
+            //   // possible duplication, fix me
+            //   following.push(username_filter)
+            // }
 
             // turn into query style { "username": }
             following_list = [];
