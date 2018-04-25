@@ -39,6 +39,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
       // consume the message DO THE WORK.
       console.log(" [.] searching(%s)", query_string);
+      console.log("limit: ", limit)
 
       var query = {
         "bool": {
