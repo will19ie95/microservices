@@ -179,7 +179,7 @@ exports.follow = function (req, res, next) {
 
   const username_to_follow = req.body.username;
   const follow = req.body.follow; // If false then unfollow
-  if (follow === null) {
+  if (follow !== false) {
     follow = true;
   }
 
