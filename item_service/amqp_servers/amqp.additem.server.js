@@ -40,40 +40,14 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
 
       newItem.save((err, newitem) => {
         var reply;
-          const id_string = JSON.parse(JSON.stringify(newItem._id))
+        const id_string = JSON.parse(JSON.stringify(newItem._id))
         
-        client.index({
-          index: "twitter",
-          type: "items",
-          id: id_string,
-          body: {
-            "username": newItem.username,
-            "liked_by": newItem.liked_by,
-            "media": newItem.media,
-            "childType": newItem.childType,
-            "retweeted": newItem.retweeted,
-            "content": newItem.content,
-            "__v": newItem._v,
-            "timestamp": newItem.timestamp,
-            "property": newItem.property,
-            "id": newItem.id,
-          }
-        }, function (err, resp, status) {
-          // console.log("Added " + newItem._id + " to ElasticSearch")
-          // return res.json({
-          //   status: "OK",
-          //   message: "Successfully created Item",
-          //   id: newItem.id,
-          //   item: newItem
-          // })
-        });
-
         if (err) {
           console.log(err.stack)
           reply = {
             status: "error",
             message: "Error: " + err.stack
-          }
+        }
         } else {
           reply = {
             status: "OK",
