@@ -72,6 +72,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
           if (!user) {
             console.log("USER NOT FOUND")
           }
+          console.log("FOUND", user)
           // list of following, only return if match any of these
           var following = user.following;
 
