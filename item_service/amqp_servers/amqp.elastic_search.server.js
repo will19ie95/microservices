@@ -112,7 +112,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
             ch.ack(search);
           }
         });
-      }, 2000);
+      }, 3000);
         
     });
   });
