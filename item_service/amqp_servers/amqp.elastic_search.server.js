@@ -23,11 +23,11 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
     ch.assertQueue(q, { durable: true });
     ch.prefetch(1);
     ch.consume(q, function reply(search) {
+      var search_json = JSON.parse(search.content);
 
       console.log("Searching with ")
-      console.log(search)
+      console.log(search_json)
 
-      var search_json = JSON.parse(search.content);
 
       var options = search_json.options;
       var query_string = options.query_string;
