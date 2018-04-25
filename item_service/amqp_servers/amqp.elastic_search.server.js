@@ -80,6 +80,7 @@ amqp.connect('amqp://yong:yong@130.245.168.55', function (err, conn) {
               { correlationId: search.properties.correlationId },
               { persistent: true });
             ch.ack(search);
+            
           }
           // list of following, only return if match any of these
           var following = user.following;
